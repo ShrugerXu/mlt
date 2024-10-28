@@ -228,12 +228,18 @@ static int filter_get_image(mlt_frame frame,
             if (!use_luminance) {
                 uint8_t *q = mlt_frame_get_alpha(mask);
                 if (!q) {
-                    mlt_log_warning(MLT_FILTER_SERVICE(filter),
-                                    "failed to get alpha channel from mask: %s\n",
-                                    mlt_properties_get(MLT_FILTER_PROPERTIES(filter), "resource"));
+                    //mlt_log_warning(MLT_FILTER_SERVICE(filter),
+                    //                "failed to get alpha channel from mask: %s\n",
+                    //                mlt_properties_get(MLT_FILTER_PROPERTIES(filter), "resource"));
+                    //int alphasize = *width * *height;
+                    //q = mlt_pool_alloc(alphasize);
+                    //memset(q, 255, alphasize);
+                    //mlt_frame_set_alpha(mask, q, alphasize, mlt_pool_release);
                     int alphasize = *width * *height;
                     q = mlt_pool_alloc(alphasize);
-                    memset(q, 255, alphasize);
+                    for (int i = 0, j = 0; i < alphasize; i++, j+=2) {
+                        q[i] = 255 - mask_img[j];
+                    }
                     mlt_frame_set_alpha(mask, q, alphasize, mlt_pool_release);
                 }
                 slice_desc desc = {.alpha = p,
